@@ -2,9 +2,10 @@ new Vue({
   el: "#app",
   data: {
     gameStarted: false,
+    gameEndWarning: false,
     playerHealth: 100,
     monsterHealth: 100,
-    logMessages: { player: [], monster: [] }
+    history: []
   },
   computed: {
     playerBarStyle() {
@@ -23,19 +24,27 @@ new Vue({
       const dmg = bonusDmg
         ? Math.floor(Math.random() * 10) + 5
         : Math.floor(Math.random() * 10);
+      const log = this.history;
 
-      this.monsterHealth = this.monsterHealth - dmg;
-      this.logMessages.player.push(`Attacked Monster for ${dmg}`);
+      this.monsterHealth -= dmg;
+      log.push({ character: "player", message: `Attacked Monster for ${dmg}` });
+      this.gameEnd();
     },
     attackOfMonster() {
       const dmg = Math.floor(Math.random() * 8);
-      this.playerHealth = this.playerHealth - dmg;
-      this.logMessages.monster.push(`Attacked Player for ${dmg}`);
+      const log = this.history;
+
+      this.playerHealth -= dmg;
+      log.push({ character: "monster", message: `Attacked Player for ${dmg}` });
+      this.gameEnd();
     },
     healPlayer() {
-      const heal = Math.floor(Math.random() * 10);
+      const heal = Math.floor(Math.random() * 10) + 1;
+      const log = this.history;
+
       this.playerHealth += heal;
-      this.logMessages.player.push(`Player healed for ${heal}`);
+      log.push({ character: "player", message: `Player healed for ${heal}` });
+      this.gameEnd();
     },
     attack(bonusDmg) {
       this.attackOfPlayer(bonusDmg);
@@ -44,6 +53,34 @@ new Vue({
     heal() {
       this.healPlayer();
       this.attackOfMonster();
+    },
+    gameStart() {
+      this.gameStarted = true;
+      this.gameEndWarning = false;
+      this.playerHealth = 100;
+      this.monsterHealth = 100;
+    },
+    gameEnd() {
+      if (this.playerHealth < 0 && this.gameEndWarning === false) {
+        let confirmation = confirm("You're dead, try again?");
+        if (confirmation === true) {
+          this.gameReset();
+        }
+        return;
+      }
+      if (this.monsterHealth < 0 && this.gameEndWarning === false) {
+        let confirmation = confirm("Congrats! The monster is dead, try again?");
+        if (confirmation === true) {
+          this.gameReset();
+        }
+        return;
+      }
+    },
+    gameReset() {
+      this.gameEndWarning = true;
+      this.gameStarted = false;
+      this.history = [];
+      this.gameStart();
     }
   }
 });
