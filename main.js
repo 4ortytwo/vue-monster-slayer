@@ -20,36 +20,51 @@ new Vue({
     }
   },
   methods: {
+    calculateDamage(min, max, bonusDmg) {
+      return bonusDmg
+        ? Math.floor(Math.random() * max) + 5
+        : Math.floor(Math.random() * max) + min;
+    },
     attackOfPlayer(bonusDmg) {
-      const dmg = bonusDmg
-        ? Math.floor(Math.random() * 10) + 5
-        : Math.floor(Math.random() * 10);
+      const dmg = calculateDamage(bonusDmg)
 
       this.monsterHealth -= dmg;
-      this.actionLog.push({ character: "player", message: `Attacked Monster for ${dmg}` });
+      this.actionLog.push({
+        character: "player",
+        message: `Attacked Monster for ${dmg}`
+      });
       this.gameEnd();
     },
     attackOfMonster() {
       const dmg = Math.floor(Math.random() * 8);
 
       this.playerHealth -= dmg;
-      this.actionLog.push({ character: "monster", message: `Attacked Player for ${dmg}` });
+      this.actionLog.push({
+        character: "monster",
+        message: `Attacked Player for ${dmg}`
+      });
       this.gameEnd();
     },
     healPlayer() {
       const heal = Math.floor(Math.random() * 10) + 1;
 
       this.playerHealth += heal;
-      this.actionLog.push({ character: "player", message: `Player healed for ${heal}` });
+      this.actionLog.push({
+        character: "player",
+        message: `Player healed for ${heal}`
+      });
       this.gameEnd();
     },
     attack(bonusDmg) {
       this.attackOfPlayer(bonusDmg);
+      this.gameEnd();
       this.attackOfMonster();
+      this.gameEnd();
     },
     heal() {
       this.healPlayer();
       this.attackOfMonster();
+      this.gameEnd();
     },
     gameStart() {
       this.gameStarted = true;
@@ -62,6 +77,9 @@ new Vue({
         let confirmation = confirm("You're dead, try again?");
         if (confirmation === true) {
           this.gameReset();
+          console.log("returning");
+
+          return;
         }
         return;
       }
@@ -69,6 +87,9 @@ new Vue({
         let confirmation = confirm("Congrats! The monster is dead, try again?");
         if (confirmation === true) {
           this.gameReset();
+          console.log("returning");
+
+          return;
         }
         return;
       }
