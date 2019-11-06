@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="small-6 columns">
-          <h1 class="text-center">Monster</h1>
+          <h1 class="text-center">Fedor</h1>
           <div class="healthbar">
             <div
               :style="monsterBarStyle"
@@ -33,7 +33,7 @@
       <section class="row controls" v-if="!gameStarted">
         <div class="small-12 columns">
           <button id="start-game" @click="gameStart">
-            Start Game
+            Begin
           </button>
         </div>
       </section>
@@ -50,7 +50,7 @@
       <section class="row log">
         <div class="small-12 columns">
           <ul>
-            <template v-for="(log, index) in history.slice().reverse()">
+            <template v-for="(log, index) in actionLog.slice().reverse()">
               <li
                 :class="log.character === 'player' ? 'player-turn' : 'monster-turn'"
                 :key="`${log.character}${index}`"

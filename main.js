@@ -5,7 +5,7 @@ new Vue({
     gameEndWarning: false,
     playerHealth: 100,
     monsterHealth: 100,
-    history: []
+    actionLog: []
   },
   computed: {
     playerBarStyle() {
@@ -24,26 +24,23 @@ new Vue({
       const dmg = bonusDmg
         ? Math.floor(Math.random() * 10) + 5
         : Math.floor(Math.random() * 10);
-      const log = this.history;
 
       this.monsterHealth -= dmg;
-      log.push({ character: "player", message: `Attacked Monster for ${dmg}` });
+      this.actionLog.push({ character: "player", message: `Attacked Monster for ${dmg}` });
       this.gameEnd();
     },
     attackOfMonster() {
       const dmg = Math.floor(Math.random() * 8);
-      const log = this.history;
 
       this.playerHealth -= dmg;
-      log.push({ character: "monster", message: `Attacked Player for ${dmg}` });
+      this.actionLog.push({ character: "monster", message: `Attacked Player for ${dmg}` });
       this.gameEnd();
     },
     healPlayer() {
       const heal = Math.floor(Math.random() * 10) + 1;
-      const log = this.history;
 
       this.playerHealth += heal;
-      log.push({ character: "player", message: `Player healed for ${heal}` });
+      this.actionLog.push({ character: "player", message: `Player healed for ${heal}` });
       this.gameEnd();
     },
     attack(bonusDmg) {
@@ -79,7 +76,7 @@ new Vue({
     gameReset() {
       this.gameEndWarning = true;
       this.gameStarted = false;
-      this.history = [];
+      this.actionLog = [];
       this.gameStart();
     }
   }
