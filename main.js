@@ -2,7 +2,6 @@ new Vue({
   el: "#app",
   data: {
     gameStarted: false,
-    gameEndWarning: false,
     playerHealth: 100,
     monsterHealth: 100,
     actionLog: []
@@ -26,79 +25,69 @@ new Vue({
         : Math.floor(Math.random() * max) + min;
     },
     attackOfPlayer(bonusDmg) {
-      const dmg = calculateDamage(bonusDmg)
+      const dmg = this.calculateDamage(1, 10, bonusDmg)
 
       this.monsterHealth -= dmg;
       this.actionLog.push({
         character: "player",
         message: `Attacked Monster for ${dmg}`
       });
-      this.gameEnd();
+      this.checkWin();
     },
     attackOfMonster() {
-      const dmg = Math.floor(Math.random() * 8);
+      const dmg = this.calculateDamage(3, 11);
 
       this.playerHealth -= dmg;
       this.actionLog.push({
         character: "monster",
         message: `Attacked Player for ${dmg}`
       });
-      this.gameEnd();
+      this.checkWin();
     },
     healPlayer() {
-      const heal = Math.floor(Math.random() * 10) + 1;
+      const heal = this.playerHealth < 100 ? Math.floor(Math.random() * 13) + 4 : 0;
 
       this.playerHealth += heal;
       this.actionLog.push({
         character: "player",
         message: `Player healed for ${heal}`
       });
-      this.gameEnd();
     },
     attack(bonusDmg) {
       this.attackOfPlayer(bonusDmg);
-      this.gameEnd();
+      if (this.checkWin()) return;
       this.attackOfMonster();
-      this.gameEnd();
+      this.checkWin();
     },
     heal() {
       this.healPlayer();
+      if (this.checkWin()) return;
       this.attackOfMonster();
-      this.gameEnd();
+      this.checkWin();
     },
     gameStart() {
       this.gameStarted = true;
-      this.gameEndWarning = false;
       this.playerHealth = 100;
       this.monsterHealth = 100;
-    },
-    gameEnd() {
-      if (this.playerHealth < 0 && this.gameEndWarning === false) {
-        let confirmation = confirm("You're dead, try again?");
-        if (confirmation === true) {
-          this.gameReset();
-          console.log("returning");
-
-          return;
-        }
-        return;
-      }
-      if (this.monsterHealth < 0 && this.gameEndWarning === false) {
-        let confirmation = confirm("Congrats! The monster is dead, try again?");
-        if (confirmation === true) {
-          this.gameReset();
-          console.log("returning");
-
-          return;
-        }
-        return;
-      }
-    },
-    gameReset() {
-      this.gameEndWarning = true;
-      this.gameStarted = false;
       this.actionLog = [];
-      this.gameStart();
-    }
+
+    },
+    checkWin() {
+      if (this.monsterHealth <= 0) {
+        if (confirm("You won! New Game?")) {
+          this.gameStart();
+        }
+        this.gameIsRunning = false;
+        return true;
+      } else if (this.playerHealth <= 0) {
+        if (confirm("You lost! New Game?")) {
+          this.gameStart();
+        } else {
+          this.gameIsRunning = false;
+        }
+        return true;
+      }
+      return false;
+    },
   }
 });
