@@ -10,23 +10,23 @@
     <div id="app">
       <section class="row">
         <div class="small-6 columns">
-          <h1 class="text-center">Player</h1>
+          <h1 class="text-center">Floris</h1>
           <div class="healthbar">
             <div
               :style="playerBarStyle"
               class="healthbar text-center"
               style="background-color: green; margin: 0; color: white;"
-            ></div>
+            >{{playerHealth}}</div>
           </div>
         </div>
         <div class="small-6 columns">
-          <h1 class="text-center">Fedor</h1>
+          <h1 class="text-center">Cloud</h1>
           <div class="healthbar">
             <div
               :style="monsterBarStyle"
               class="healthbar text-center"
               style="background-color: green; margin: 0; color: white;"
-            ></div>
+            >{{monsterHealth}}</div>
           </div>
         </div>
       </section>
@@ -44,20 +44,19 @@
             SPECIAL ATTACK
           </button>
           <button id="heal" @click="heal">HEAL</button>
-          <button id="give-up">GIVE UP</button>
+          <button id="give-up" @click="giveUp">GIVE UP</button>
         </div>
       </section>
-      <section class="row log">
+      <section class="row log" v-if="actionLog.length">
         <div class="small-12 columns">
           <ul>
-            <template v-for="(log, index) in actionLog.slice().reverse()">
               <li
-                :class="log.character === 'player' ? 'player-turn' : 'monster-turn'"
-                :key="`${log.character}${index}`"
+              v-for="(action, index) in actionLog"
+                :class="action.character === 'player' ? 'player-turn' : 'monster-turn'"
+                :key="`${action.character}${index}`"
               >
-                {{ log.message }}
+                {{ action.message }}
               </li>
-            </template>
           </ul>
         </div>
       </section>
